@@ -1,0 +1,114 @@
+/* ── Google Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+
+/* ── Bootstrap ── */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+/* ══════════════════════════════════════
+   DESIGN TOKENS — SMK Binatama
+   Diambil dari file DESIGN.md prototipe
+══════════════════════════════════════ */
+:root {
+  /* Primary */
+  --color-primary:           #001a48;
+  --color-primary-container: #002d72;
+  --color-on-primary:        #ffffff;
+  --color-on-primary-container: #7a97e2;
+  --color-primary-fixed:     #dae2ff;
+  --color-primary-fixed-dim: #b1c5ff;
+
+  /* Secondary (Red accent) */
+  --color-secondary:           #bb0014;
+  --color-secondary-container: #e41f25;
+  --color-on-secondary:        #ffffff;
+
+  /* Surface */
+  --color-background:          #fcf9f8;
+  --color-surface:             #fcf9f8;
+  --color-surface-low:         #f6f3f2;
+  --color-surface-container:   #f0eded;
+  --color-surface-high:        #eae7e7;
+  --color-surface-white:       #ffffff;
+
+  /* Text */
+  --color-on-surface:         #1c1b1b;
+  --color-on-surface-variant: #444651;
+  --color-outline:            #747782;
+  --color-outline-variant:    #c4c6d2;
+
+  /* Status */
+  --color-success:       #16a34a;
+  --color-success-bg:    #dcfce7;
+  --color-warning:       #d97706;
+  --color-warning-bg:    #fef3c7;
+  --color-danger:        #dc2626;
+  --color-danger-bg:     #fee2e2;
+  --color-info:          #2563eb;
+  --color-info-bg:       #dbeafe;
+
+  /* Typography */
+  --font-family: 'Inter', sans-serif;
+
+  /* Border Radius */
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-full: 9999px;
+
+  /* Spacing */
+  --space-xs:  8px;
+  --space-sm:  12px;
+  --space-md:  16px;
+  --space-lg:  24px;
+  --space-xl:  32px;
+
+  /* Shadow */
+  --shadow-sm: 0 1px 3px rgba(0,29,72,0.08), 0 1px 2px rgba(0,29,72,0.04);
+  --shadow-md: 0 4px 12px rgba(0,29,72,0.10), 0 2px 4px rgba(0,29,72,0.06);
+  --shadow-lg: 0 8px 24px rgba(0,29,72,0.12), 0 4px 8px rgba(0,29,72,0.08);
+}
+
+/* ── Base Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  font-family: var(--font-family);
+  background-color: var(--color-background);
+  color: var(--color-on-surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Material Icons ── */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+  user-select: none;
+}
+.material-symbols-outlined.filled {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* ── Bootstrap Override ── */
+.btn { border-radius: var(--radius-lg) !important; font-weight: 600; }
+.form-control, .form-select {
+  border-radius: var(--radius-lg) !important;
+  border-color: var(--color-outline-variant);
+  font-size: 14px;
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--color-primary-container);
+  box-shadow: 0 0 0 3px rgba(0,45,114,0.12);
+}
+.card {
+  border-radius: var(--radius-xl) !important;
+  border-color: var(--color-outline-variant);
+  box-shadow: var(--shadow-sm);
+}

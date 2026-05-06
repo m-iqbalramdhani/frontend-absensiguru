@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SMK Binatama — Offline</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(160deg, #002d72 0%, #001a48 100%);
+      min-height: 100dvh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px; color: #fff;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+      vertical-align: middle;
+    }
+    .card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 24px;
+      padding: 40px 32px;
+      max-width: 360px; width: 100%;
+      text-align: center;
+      backdrop-filter: blur(12px);
+    }
+    .icon-wrap {
+      width: 72px; height: 72px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+    }
+    h1 { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+    p  { font-size: 14px; color: rgba(255,255,255,0.65); line-height: 1.6; margin-bottom: 24px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #e41f25; color: #fff;
+      border: none; border-radius: 14px;
+      padding: 12px 28px; font-size: 14px;
+      font-weight: 700; cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background .15s;
+    }
+    .btn:hover { background: #c91a20; }
+    .tips {
+      margin-top: 24px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 14px 16px;
+      text-align: left;
+    }
+    .tips p { font-size: 12px; color: rgba(255,255,255,0.55); margin-bottom: 0; }
+    .tips ul { margin-top: 8px; padding-left: 16px; }
+    .tips li { font-size: 12px; color: rgba(255,255,255,0.55); margin-bottom: 4px; }
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+      justify-content: center; margin-bottom: 28px;
+    }
+    .brand-icon {
+      width: 36px; height: 36px; background: rgba(255,255,255,0.15);
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    }
+    .brand-name { font-size: 15px; font-weight: 800; }
+    .brand-sub  { font-size: 11px; color: rgba(255,255,255,0.55); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <!-- Brand -->
+    <div class="brand">
+      <div class="brand-icon">
+        <span class="material-symbols-outlined" style="font-size:20px">school</span>
+      </div>
+      <div>
+        <div class="brand-name">SMK BINATAMA</div>
+        <div class="brand-sub">Sistem Absensi</div>
+      </div>
+    </div>
+
+    <!-- Icon -->
+    <div class="icon-wrap">
+      <span class="material-symbols-outlined" style="font-size:36px">wifi_off</span>
+    </div>
+
+    <h1>Tidak Ada Koneksi</h1>
+    <p>Anda sedang offline. Periksa koneksi internet Anda, lalu coba lagi.</p>
+
+    <button class="btn" onclick="tryReload()">
+      <span class="material-symbols-outlined" style="font-size:18px">refresh</span>
+      Coba Lagi
+    </button>
+
+    <div class="tips">
+      <p>💡 Tips:</p>
+      <ul>
+        <li>Pastikan WiFi atau data seluler aktif</li>
+        <li>Coba matikan dan nyalakan kembali WiFi</li>
+        <li>Hubungi admin jika masalah berlanjut</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    function tryReload() {
+      if (navigator.onLine) {
+        window.location.href = '/'
+      } else {
+        const btn = document.querySelector('.btn')
+        btn.textContent = 'Masih offline...'
+        setTimeout(() => {
+          btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">refresh</span> Coba Lagi'
+        }, 2000)
+      }
+    }
+    // Auto reload saat online kembali
+    window.addEventListener('online', () => { window.location.href = '/' })
+  </script>
+</body>
+</html>
