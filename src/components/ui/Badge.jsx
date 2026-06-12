@@ -40,12 +40,19 @@ const STATUS_CONFIG = {
     label: 'Alpha',
     icon: 'close',
   },
-  terlambat: {
+  toleransi: {
     bg: '#fef3c7',
     color: '#d97706',
     dot: '#f59e0b',
-    label: 'Terlambat',
+    label: 'Toleransi',
     icon: 'schedule',
+  },
+  terlambat: {
+    bg: '#fee2e2',
+    color: '#dc2626',
+    dot: '#dc2626',
+    label: 'Terlambat',
+    icon: 'error',
   },
   libur: {
     bg: '#f3e8ff',

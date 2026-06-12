@@ -16,7 +16,7 @@ export default defineConfig({
     // Proxy API ke backend lokal agar tidak kena CORS saat development
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'https://absensiguru-gplr5loe.b4a.run',
         changeOrigin: true,
         secure: false,
       },

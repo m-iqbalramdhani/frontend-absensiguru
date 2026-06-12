@@ -79,7 +79,7 @@ export default function KelolaJadwalPage() {
     if (!validate()) return
     setSaving(true)
     try {
-      await adminService.createJadwal({ ...form, guru_id: Number(form.guru_id), mapel_id: Number(form.mapel_id) })
+      await adminService.createJadwal({ ...form, guru_id: Number(form.guru_id), mapel_id: form.mapel_id })
       toast.success('Jadwal berhasil ditambahkan')
       setModalAdd(false); setForm(emptyForm); load()
     } catch (err) { toast.error(err?.response?.data?.message || 'Gagal menambah jadwal') }
@@ -99,7 +99,7 @@ export default function KelolaJadwalPage() {
     if (!validate()) return
     setSaving(true)
     try {
-      await adminService.updateJadwal(selected.id, { ...form, guru_id: Number(form.guru_id), mapel_id: Number(form.mapel_id) })
+      await adminService.updateJadwal(selected.id, { ...form, guru_id: Number(form.guru_id), mapel_id: form.mapel_id })
       toast.success('Jadwal berhasil diupdate')
       setModalEdit(false); load()
     } catch (err) { toast.error(err?.response?.data?.message || 'Gagal update jadwal') }
@@ -170,10 +170,49 @@ export default function KelolaJadwalPage() {
       {[
         { open:modalAdd, onClose:()=>setModalAdd(false), title:'Tambah Jadwal', onConfirm:handleAdd },
         { open:modalEdit, onClose:()=>setModalEdit(false), title:'Edit Jadwal', onConfirm:handleEdit },
-      ].map(m => (
+      ].map(m => {
+        const selectedGuru = form.guru_id ? guru.find(g => String(g.id) === form.guru_id) : null
+        const selectedMapel = form.mapel_id ? mapel.find(m => String(m.id) === form.mapel_id) : null
+
+        return (
         <Modal key={m.title} open={m.open} onClose={m.onClose} title={m.title}
           onConfirm={m.onConfirm} confirmLabel="Simpan" loading={saving}>
           <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+            {(selectedGuru || selectedMapel) && (
+              <div style={{
+                display:'flex', gap:12, padding:10, background:'var(--color-surface-low)',
+                borderRadius:'var(--radius-lg)', fontSize:12
+              }}>
+                {selectedGuru && (
+                  <div style={{ flex:1 }}>
+                    <p style={{ margin:0, fontSize:10, color:'var(--color-on-surface-variant)', fontWeight:600, textTransform:'uppercase' }}>Guru</p>
+                    <p style={{ margin:'4px 0 0', fontSize:12, fontWeight:500 }}>
+                      {selectedGuru.nama}
+                      <span style={{
+                        marginLeft:6, padding:'2px 6px', background:'var(--color-primary-container)',
+                        color:'#fff', borderRadius:'var(--radius-sm)', fontSize:10, fontWeight:600
+                      }}>
+                        ID: {selectedGuru.id}
+                      </span>
+                    </p>
+                  </div>
+                )}
+                {selectedMapel && (
+                  <div style={{ flex:1 }}>
+                    <p style={{ margin:0, fontSize:10, color:'var(--color-on-surface-variant)', fontWeight:600, textTransform:'uppercase' }}>Mapel</p>
+                    <p style={{ margin:'4px 0 0', fontSize:12, fontWeight:500 }}>
+                      {selectedMapel.nama_mapel}
+                      <span style={{
+                        marginLeft:6, padding:'2px 6px', background:'var(--color-secondary-container)',
+                        color:'#fff', borderRadius:'var(--radius-sm)', fontSize:10, fontWeight:600
+                      }}>
+                        ID: {selectedMapel.id}
+                      </span>
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
             <Select label="Guru" value={form.guru_id} onChange={setField('guru_id')}
               options={guruOptions} placeholder="Pilih guru..." error={errors.guru_id} required />
             <Select label="Mata Pelajaran" value={form.mapel_id} onChange={setField('mapel_id')}
@@ -186,7 +225,8 @@ export default function KelolaJadwalPage() {
             </div>
           </div>
         </Modal>
-      ))}
+        )
+      })}
 
       <ConfirmDialog open={modalDel} onClose={() => setModalDel(false)} onConfirm={handleDel}
         title="Hapus Jadwal"
@@ -214,7 +254,10 @@ function JadwalRow({ item, isLast, onEdit, onDel }) {
       </div>
       <div style={{ width:1, height:32, background:'var(--color-outline-variant)', flexShrink:0 }} />
       <div style={{ flex:1, minWidth:0 }}>
-        <p style={{ margin:0, fontSize:14, fontWeight:600, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{item.nama_mapel}</p>
+        <p style={{ margin:0, fontSize:14, fontWeight:600, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
+          <span style={{ background:'var(--color-primary-container)', color:'#fff', padding:'2px 6px', borderRadius:'var(--radius-sm)', fontSize:11, marginRight:6, textTransform:'uppercase' }}>{item.id}</span>
+          {item.nama_mapel}
+        </p>
         <p style={{ margin:'2px 0 0', fontSize:11, color:'var(--color-on-surface-variant)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{item.nama_guru}</p>
       </div>
       <div style={{ display:'flex', gap:4 }}>

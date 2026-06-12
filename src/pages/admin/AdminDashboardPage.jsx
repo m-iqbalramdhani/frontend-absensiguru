@@ -25,6 +25,9 @@ export default function AdminDashboardPage() {
     return () => clearInterval(timer)
   }, [])
 
+  // Data untuk SPK SAW
+  const [spkData, setSpkData] = useState([])
+
   // Load data saat mount
   useEffect(() => {
     loadDashboardData()
@@ -40,21 +43,33 @@ export default function AdminDashboardPage() {
       const guruRes = await api.get('/api/guru')
       const totalGuru = guruRes.data?.length || 0
 
-      // Load rekap absensi hari ini
-      const rekapRes = await api.get(`/api/absensi/rekap?tanggal=${today}`)
-      const rekapData = rekapRes.data || {}
+      try {
+        const today = new Date().toISOString().split('T')[0]
+        const rekapRes = await api.get(`/api/absensi/rekap?tanggal=${today}`)
+        const rekapData = rekapRes.data || {}
+        setStats({
+          totalGuru: totalGuru,
+          hadirHariIni: rekapData.hadir || 0,
+          izinHariIni: rekapData.izin || 0,
+          sakitHariIni: rekapData.sakit || 0,
+          alphaHariIni: rekapData.alpha || 0,
+          totalAbsensiBulanIni: rekapData.total || 0
+        })
+        setRecentAttendance(rekapData.riwayat?.slice(0, 5) || [])
+      } catch (e) {
+        console.error('[AdminDashboard] Error Rekap:', e)
+      }
 
-      setStats({
-        totalGuru: totalGuru,
-        hadirHariIni: rekapData.hadir || 0,
-        izinHariIni: rekapData.izin || 0,
-        sakitHariIni: rekapData.sakit || 0,
-        alphaHariIni: rekapData.alpha || 0,
-        totalAbsensiBulanIni: rekapData.total || 0
-      })
-      setRecentAttendance(rekapData.riwayat?.slice(0, 5) || [])
+      try {
+        // Load data SPK
+        const spkRes = await api.get('/api/absensi/spk')
+        setSpkData(spkRes.data?.data || [])
+      } catch (e) {
+        console.error('[AdminDashboard] Error SPK:', e)
+      }
+
     } catch (error) {
-      console.error('[AdminDashboard] Error:', error.response?.status)
+      console.error('[AdminDashboard] Error Total Guru:', error)
     } finally {
       setLoading(false)
     }
@@ -63,6 +78,8 @@ export default function AdminDashboardPage() {
   const getStatusColor = (status) => {
     switch (status) {
       case 'hadir': return '#10b981'
+      case 'toleransi': return '#d97706'
+      case 'terlambat': return '#dc2626'
       case 'izin': return '#f59e0b'
       case 'sakit': return '#ef4444'
       case 'alpha': return '#6b7280'
@@ -527,6 +544,96 @@ export default function AdminDashboardPage() {
               </div>
             </div>
           </button>
+        </div>
+      </div>
+
+      {/* SPK Guru Paling Disiplin */}
+      <div style={{ marginBottom: '24px' }}>
+        <h2 style={{ 
+          fontSize: '18px', 
+          fontWeight: 600, 
+          margin: '0 0 16px 0',
+          color: 'var(--color-on-surface)'
+        }}>
+          🏆 Peringkat Guru Paling Disiplin (SPK - SAW)
+        </h2>
+        <div style={{
+          background: 'var(--color-surface-variant)',
+          borderRadius: 'var(--radius-md)',
+          border: '1px solid var(--color-outline)',
+          overflow: 'hidden'
+        }}>
+          {spkData.length === 0 ? (
+            <div style={{ padding: '40px', textAlign: 'center', color: 'var(--color-on-surface-variant)' }}>
+              Memuat data SPK...
+            </div>
+          ) : (
+            spkData.map((item, index) => (
+               <div key={item.id} style={{
+                  padding: '16px 20px',
+                  borderBottom: index < spkData.length - 1 ? '1px solid var(--color-outline)' : 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '16px',
+                  transition: 'background 0.2s',
+                  cursor: 'pointer'
+               }}
+               onMouseOver={e => e.currentTarget.style.background = 'var(--color-surface)'}
+               onMouseOut={e => e.currentTarget.style.background = 'transparent'}
+               >
+                  {/* Ranking Badge */}
+                  <div style={{
+                     width: '40px', height: '40px',
+                     borderRadius: '50%',
+                     background: item.rank === 1 ? '#f59e0b' : item.rank === 2 ? '#94a3b8' : item.rank === 3 ? '#b45309' : 'var(--color-surface)',
+                     color: item.rank <= 3 ? '#fff' : 'var(--color-on-surface)',
+                     display: 'flex', alignItems: 'center', justifyContent: 'center',
+                     fontWeight: 700,
+                     fontSize: '16px',
+                     flexShrink: 0,
+                     border: item.rank > 3 ? '1px solid var(--color-outline)' : 'none'
+                  }}>
+                     #{item.rank}
+                  </div>
+                  
+                  {/* Avatar */}
+                  <div style={{
+                     width: '44px', height: '44px',
+                     borderRadius: '50%',
+                     background: 'var(--color-primary)',
+                     color: '#fff',
+                     display: 'flex', alignItems: 'center', justifyContent: 'center',
+                     fontSize: '18px', fontWeight: 700,
+                     flexShrink: 0
+                  }}>
+                     {item.nama.charAt(0)}
+                  </div>
+
+                  {/* Info */}
+                  <div style={{ flex: 1 }}>
+                     <div style={{ fontSize: '15px', fontWeight: 600, color: 'var(--color-on-surface)', marginBottom: '4px' }}>
+                        {item.nama}
+                     </div>
+                     <div style={{ fontSize: '13px', color: 'var(--color-on-surface-variant)' }}>
+                        Nilai SAW: <span style={{ fontWeight: 700, color: 'var(--color-primary)' }}>{item.skor}</span>
+                     </div>
+                  </div>
+
+                  {/* Status Badge */}
+                  <span style={{
+                     background: item.status === 'Sangat Disiplin' ? 'rgba(16, 185, 129, 0.1)' : item.status === 'Disiplin' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(245, 158, 11, 0.1)',
+                     color: item.status === 'Sangat Disiplin' ? '#10b981' : item.status === 'Disiplin' ? '#3b82f6' : '#f59e0b',
+                     padding: '6px 14px',
+                     borderRadius: '20px',
+                     fontSize: '12px',
+                     fontWeight: 600,
+                     whiteSpace: 'nowrap'
+                  }}>
+                     {item.status}
+                  </span>
+               </div>
+            ))
+          )}
         </div>
       </div>
 

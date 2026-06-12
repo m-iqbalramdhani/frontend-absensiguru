@@ -31,7 +31,7 @@ export default function DataGuruPage() {
   const [saving, setSaving]         = useState(false)
 
   // Form state
-  const emptyForm = { name:'', email:'', password:'', nip:'', nama:'', no_hp:'' }
+  const emptyForm = { id:'', name:'', email:'', password:'', nip:'', nama:'', no_hp:'' }
   const [form, setForm]             = useState(emptyForm)
   const [errors, setErrors]         = useState({})
 
@@ -72,11 +72,15 @@ export default function DataGuruPage() {
     const e = {}
     if (!form.nama.trim())  e.nama  = 'Nama wajib diisi'
     if (!isEdit) {
+      if (!form.id)              e.id       = 'ID Guru wajib diisi'
       if (!form.name.trim())     e.name     = 'Nama akun wajib diisi'
       if (!form.email.trim())    e.email    = 'Email wajib diisi'
       else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Format email tidak valid'
       if (!form.password)        e.password = 'Password wajib diisi'
       else if (form.password.length < 6) e.password = 'Minimal 6 karakter'
+    } else {
+      if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Format email tidak valid'
+      if (form.password && form.password.length < 6) e.password = 'Minimal 6 karakter'
     }
     setErrors(e)
     return Object.keys(e).length === 0
@@ -100,7 +104,7 @@ export default function DataGuruPage() {
   // EDIT
   const openEdit = (item) => {
     setSelected(item)
-    setForm({ name:'', email:'', password:'', nip: item.nip||'', nama: item.nama||'', no_hp: item.no_hp||'' })
+    setForm({ id: item.id||'', name: item.name||'', email: item.email||'', password: '', nip: item.nip||'', nama: item.nama||'', no_hp: item.no_hp||'' })
     setErrors({})
     setModalEdit(true)
   }
@@ -108,7 +112,7 @@ export default function DataGuruPage() {
     if (!validate(true)) return
     setSaving(true)
     try {
-      await adminService.updateGuru(selected.id, { nip: form.nip, nama: form.nama, no_hp: form.no_hp })
+      await adminService.updateGuru(selected.id, { nip: form.nip, nama: form.nama, no_hp: form.no_hp, name: form.name, email: form.email, password: form.password || undefined })
       toast.success('Data guru berhasil diupdate')
       setModalEdit(false)
       load()
@@ -285,11 +289,25 @@ function ActionBtn({ icon, color, bg, onClick, title }) {
 function GuruForm({ form, setField, errors, isEdit }) {
   return (
     <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+      {isEdit && (
+        <>
+          <p style={{ margin:0, fontSize:12, fontWeight:600, color:'var(--color-on-surface-variant)', padding:'8px 12px', background:'var(--color-surface-low)', borderRadius:'var(--radius-md)' }}>
+            🔐 Data Akun Login
+          </p>
+          <Input label="Nama Akun" placeholder="Nama untuk akun login" value={form.name} onChange={setField('name')} error={errors.name} icon="person" />
+          <Input label="Email" type="email" placeholder="email@sekolah.com" value={form.email} onChange={setField('email')} error={errors.email} icon="email" />
+          <Input label="Password (kosongkan jika tidak ingin mengubah)" type="password" placeholder="Minimal 6 karakter" value={form.password} onChange={setField('password')} error={errors.password} />
+          <p style={{ margin:0, fontSize:12, fontWeight:600, color:'var(--color-on-surface-variant)', padding:'8px 12px', background:'var(--color-surface-low)', borderRadius:'var(--radius-md)' }}>
+            👤 Data Profil Guru
+          </p>
+        </>
+      )}
       {!isEdit && (
         <>
           <p style={{ margin:0, fontSize:12, fontWeight:600, color:'var(--color-on-surface-variant)', padding:'8px 12px', background:'var(--color-surface-low)', borderRadius:'var(--radius-md)' }}>
             🔐 Data Akun Login
           </p>
+          <Input label="ID Guru" type="number" placeholder="Contoh: 1" value={form.id} onChange={setField('id')} error={errors.id} required icon="tag" />
           <Input label="Nama Akun" placeholder="Nama lengkap untuk akun" value={form.name} onChange={setField('name')} error={errors.name} required icon="person" />
           <Input label="Email" type="email" placeholder="email@sekolah.com" value={form.email} onChange={setField('email')} error={errors.email} required icon="email" />
           <Input label="Password" type="password" placeholder="Minimal 6 karakter" value={form.password} onChange={setField('password')} error={errors.password} required />

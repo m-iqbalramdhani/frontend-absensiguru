@@ -36,7 +36,7 @@ export default function RiwayatPage() {
       // Calculate stats
       const summary = data.reduce((acc, item) => {
         acc.total++
-        if (item.status === 'hadir') acc.hadir++
+        if (['hadir', 'toleransi', 'terlambat'].includes(item.status)) acc.hadir++
         else if (item.status === 'izin') acc.izin++
         else if (item.status === 'sakit') acc.sakit++
         else if (item.status === 'alpha') acc.alpha++
@@ -126,6 +126,8 @@ export default function RiwayatPage() {
   const getStatusColor = (status) => {
     switch (status) {
       case 'hadir': return '#10b981'
+      case 'toleransi': return '#d97706'
+      case 'terlambat': return '#dc2626'
       case 'izin': return '#f59e0b'
       case 'sakit': return '#ef4444'
       case 'alpha': return '#6b7280'

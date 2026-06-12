@@ -15,7 +15,7 @@ export default function MapelPage() {
   const [modalDel, setModalDel] = useState(false)
   const [selected, setSelected] = useState(null)
   const [saving, setSaving]     = useState(false)
-  const [form, setForm]         = useState({ nama_mapel: '' })
+  const [form, setForm]         = useState({ id: '', nama_mapel: '' })
   const [errors, setErrors]     = useState({})
 
   const load = async () => {
@@ -32,29 +32,31 @@ export default function MapelPage() {
     mapel.filter(m => m.nama_mapel?.toLowerCase().includes(search.toLowerCase()))
   , [mapel, search])
 
-  const validate = () => {
-    if (!form.nama_mapel.trim()) { setErrors({ nama_mapel:'Nama mapel wajib diisi' }); return false }
-    setErrors({})
-    return true
+  const validate = (isEdit = false) => {
+    const e = {}
+    if (!isEdit && !form.id.trim()) e.id = 'ID mapel wajib diisi'
+    if (!form.nama_mapel.trim()) e.nama_mapel = 'Nama mapel wajib diisi'
+    setErrors(e)
+    return Object.keys(e).length === 0
   }
 
   const handleAdd = async () => {
-    if (!validate()) return
+    if (!validate(false)) return
     setSaving(true)
     try {
       await adminService.createMapel(form)
       toast.success('Mapel berhasil ditambahkan')
-      setModalAdd(false); setForm({ nama_mapel:'' }); load()
+      setModalAdd(false); setForm({ id:'', nama_mapel:'' }); load()
     } catch (err) { toast.error(err?.response?.data?.message || 'Gagal menambah mapel') }
     finally { setSaving(false) }
   }
 
-  const openEdit = (item) => { setSelected(item); setForm({ nama_mapel: item.nama_mapel }); setErrors({}); setModalEdit(true) }
+  const openEdit = (item) => { setSelected(item); setForm({ id: item.id, nama_mapel: item.nama_mapel }); setErrors({}); setModalEdit(true) }
   const handleEdit = async () => {
-    if (!validate()) return
+    if (!validate(true)) return
     setSaving(true)
     try {
-      await adminService.updateMapel(selected.id, form)
+      await adminService.updateMapel(selected.id, { nama_mapel: form.nama_mapel })
       toast.success('Mapel berhasil diupdate')
       setModalEdit(false); load()
     } catch (err) { toast.error(err?.response?.data?.message || 'Gagal update mapel') }
@@ -78,7 +80,7 @@ export default function MapelPage() {
         title="Mata Pelajaran"
         subtitle={`${mapel.length} mapel terdaftar`}
         action={
-          <Button icon="add" onClick={() => { setForm({ nama_mapel:'' }); setErrors({}); setModalAdd(true) }}>
+          <Button icon="add" onClick={() => { setForm({ id:'', nama_mapel:'' }); setErrors({}); setModalAdd(true) }}>
             Tambah Mapel
           </Button>
         }
@@ -130,17 +132,25 @@ export default function MapelPage() {
       {/* Modal Tambah */}
       <Modal open={modalAdd} onClose={() => setModalAdd(false)} title="Tambah Mata Pelajaran"
         onConfirm={handleAdd} confirmLabel="Simpan" loading={saving} size="sm">
-        <Input label="Nama Mata Pelajaran" placeholder="cth: Matematika Wajib" value={form.nama_mapel}
-          onChange={e => { setForm({ nama_mapel: e.target.value }); setErrors({}) }}
-          error={errors.nama_mapel} required icon="book" autoFocus />
+        <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+          <Input label="ID Mata Pelajaran (Kode)" placeholder="cth: h atau b" value={form.id}
+            onChange={e => { setForm(p => ({ ...p, id: e.target.value })); setErrors(p => ({ ...p, id: '' })) }}
+            error={errors.id} required icon="tag" autoFocus />
+          <Input label="Nama Mata Pelajaran" placeholder="cth: Matematika Wajib" value={form.nama_mapel}
+            onChange={e => { setForm(p => ({ ...p, nama_mapel: e.target.value })); setErrors(p => ({ ...p, nama_mapel: '' })) }}
+            error={errors.nama_mapel} required icon="book" />
+        </div>
       </Modal>
 
       {/* Modal Edit */}
       <Modal open={modalEdit} onClose={() => setModalEdit(false)} title="Edit Mata Pelajaran"
         onConfirm={handleEdit} confirmLabel="Update" loading={saving} size="sm">
-        <Input label="Nama Mata Pelajaran" value={form.nama_mapel}
-          onChange={e => { setForm({ nama_mapel: e.target.value }); setErrors({}) }}
-          error={errors.nama_mapel} required icon="book" autoFocus />
+        <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+          <Input label="ID Mata Pelajaran" value={form.id} disabled icon="tag" />
+          <Input label="Nama Mata Pelajaran" value={form.nama_mapel}
+            onChange={e => { setForm(p => ({ ...p, nama_mapel: e.target.value })); setErrors(p => ({ ...p, nama_mapel: '' })) }}
+            error={errors.nama_mapel} required icon="book" autoFocus />
+        </div>
       </Modal>
 
       <ConfirmDialog open={modalDel} onClose={() => setModalDel(false)} onConfirm={handleDel}

@@ -60,8 +60,8 @@ export default function Modal({
       style={{
         position: 'fixed', inset: 0, zIndex: 1000,
         background: 'rgba(0,0,0,0.4)',
-        display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
-        padding: '0',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '16px',
         animation: 'modal-fade-in .2s ease',
       }}
     >
@@ -69,10 +69,10 @@ export default function Modal({
         width: '100%',
         maxWidth: maxW,
         background: '#ffffff',
-        borderRadius: 'var(--radius-xl) var(--radius-xl) 0 0',
-        boxShadow: '0 -4px 32px rgba(0,0,0,0.18)',
+        borderRadius: 'var(--radius-md)',
+        boxShadow: '0 4px 32px rgba(0,0,0,0.18)',
         overflow: 'hidden',
-        animation: 'modal-slide-up .25s cubic-bezier(.32,1,.32,1)',
+        animation: 'modal-zoom-in .25s cubic-bezier(.32,1,.32,1)',
         maxHeight: '90dvh',
         display: 'flex', flexDirection: 'column',
       }}
@@ -148,14 +148,20 @@ export default function Modal({
           from { opacity: 0; }
           to   { opacity: 1; }
         }
+        @keyframes modal-zoom-in {
+          from { transform: scale(0.95); opacity: 0; }
+          to   { transform: scale(1);    opacity: 1; }
+        }
         @keyframes modal-slide-up {
           from { transform: translateY(40px); opacity: 0; }
           to   { transform: translateY(0);   opacity: 1; }
         }
-        @media (min-width: 640px) {
+        @media (max-width: 640px) {
           .modal-sheet {
-            border-radius: var(--radius-xl) !important;
+            width: 100% !important;
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0 !important;
             max-height: 85dvh;
+            animation: modal-slide-up .25s cubic-bezier(.32,1,.32,1) !important;
           }
         }
       `}</style>

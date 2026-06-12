@@ -24,9 +24,17 @@ export default function AbsensiPage() {
     loadSchoolLocation()
   }, [])
 
+  const getLocalDate = () => {
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
   const loadTodayAttendance = async () => {
     try {
-      const today = new Date().toISOString().split('T')[0]
+      const today = getLocalDate()
       const res = await api.get(`/api/absensi/riwayat?tanggal=${today}`)
       setTodayAttendance(res.data?.[0] || null)
     } catch (error) {
@@ -110,11 +118,8 @@ export default function AbsensiPage() {
       return
     }
 
-    if (distance > schoolLocation.radius) {
-      setMessage(`Anda berada ${Math.round(distance)} meter dari sekolah. Maksimal radius: ${schoolLocation.radius} meter.`)
-      setMessageType('error')
-      return
-    }
+    // Validasi frontend untuk UI, tapi tidak memblokir (diserahkan ke backend)
+    // if (distance > schoolLocation.radius) { ... }
 
     setLoading(true)
     try {
@@ -147,11 +152,8 @@ export default function AbsensiPage() {
       return
     }
 
-    if (distance > schoolLocation.radius) {
-      setMessage(`Anda berada ${Math.round(distance)} meter dari sekolah. Maksimal radius: ${schoolLocation.radius} meter.`)
-      setMessageType('error')
-      return
-    }
+    // Validasi frontend untuk UI, tapi tidak memblokir (diserahkan ke backend)
+    // if (distance > schoolLocation.radius) { ... }
 
     setLoading(true)
     try {
@@ -178,7 +180,7 @@ export default function AbsensiPage() {
     try {
       await api.post('/api/absensi/izin-sakit', {
         ...izinForm,
-        tanggal: izinForm.tanggal || new Date().toISOString().split('T')[0]
+        tanggal: izinForm.tanggal || getLocalDate()
       })
       setMessage(`Laporan ${izinForm.status} berhasil dicatat`)
       setMessageType('success')
@@ -189,6 +191,29 @@ export default function AbsensiPage() {
       setMessageType('error')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const getGradColor = (status) => {
+    switch (status) {
+      case 'hadir': return 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+      case 'toleransi': return 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
+      case 'terlambat': return 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
+      case 'izin': return 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)'
+      case 'sakit': return 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)'
+      default: return 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)'
+    }
+  }
+
+  const getStatusLabel = (status) => {
+    switch (status) {
+      case 'hadir': return 'Hadir'
+      case 'toleransi': return 'Toleransi'
+      case 'terlambat': return 'Terlambat'
+      case 'izin': return 'Izin'
+      case 'sakit': return 'Sakit'
+      case 'alpha': return 'Alpha'
+      default: return status || 'Belum Absen'
     }
   }
 
@@ -216,17 +241,18 @@ export default function AbsensiPage() {
       {/* Status Hari Ini */}
       {todayAttendance && (
         <div style={{
-          background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+          background: getGradColor(todayAttendance.status),
           borderRadius: 'var(--radius-lg)',
           padding: '20px',
           marginBottom: '24px',
-          color: '#fff'
+          color: '#fff',
+          transition: 'all 0.3s'
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
             <div>
               <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '4px' }}>Status Hari Ini</div>
-              <div style={{ fontSize: '20px', fontWeight: 700 }}>
-                {todayAttendance.status === 'hadir' ? 'Hadir' : todayAttendance.status}
+              <div style={{ fontSize: '20px', fontWeight: 700, textTransform: 'capitalize' }}>
+                {getStatusLabel(todayAttendance.status)}
               </div>
             </div>
             <div style={{ display: 'flex', gap: '32px' }}>
