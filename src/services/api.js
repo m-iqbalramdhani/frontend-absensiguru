@@ -2,7 +2,7 @@ import axios from 'axios'
 import useAuthStore from '../store/authStore'
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://absensiguru-mjktsrpq.b4a.run',
+  baseURL: import.meta.env.VITE_API_URL || 'https://absensiguru-ufj09qpq.b4a.run',
   headers: { 'Content-Type': 'application/json' },
   timeout: 10000,
 });
