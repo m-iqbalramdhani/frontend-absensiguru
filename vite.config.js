@@ -16,7 +16,7 @@ export default defineConfig({
     // Proxy API ke backend lokal agar tidak kena CORS saat development
     proxy: {
       '/api': {
-        target: 'https://absensiguru-dh2txb2u.b4a.run/',
+        target: 'https://api.siabinatama.my.id/',
         changeOrigin: true,
         secure: false,
       },

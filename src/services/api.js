@@ -1,10 +1,12 @@
 import axios from 'axios'
 import useAuthStore from '../store/authStore'
 
+const BASE_URL = (import.meta.env.VITE_API_URL || 'https://api.siabinatama.my.id').replace(/\/$/, '')
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://absensiguru-ufj09qpq.b4a.run',
+  baseURL: BASE_URL,
   headers: { 'Content-Type': 'application/json' },
-  timeout: 10000,
+  timeout: 15000,
 });
 
 // ── Request Interceptor — tambahkan token ke header ──
