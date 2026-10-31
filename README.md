@@ -1,20 +1,16 @@
-<<<<<<< HEAD
-# React + Vite
+# Frontend Absensi Guru SMK Bina Tama
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplikasi frontend absensi guru berbasis React 19 + Vite dan Progressive Web App (PWA).
 
-Currently, two official plugins are available:
+## 🚀 Menjalankan Project
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+# Install dependencies
+npm install
 
-## React Compiler
+# Menjalankan development server
+npm run dev
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-=======
-# frontend-absensiguru
->>>>>>> 20a58bfcd6489640355e22f0e8e20b9ce8d641dc
+# Membangun bundle production
+npm run build
+```

@@ -36,7 +36,7 @@ export default function AbsensiPage() {
     try {
       const today = getLocalDate()
       const res = await api.get(`/api/absensi/riwayat?tanggal=${today}`)
-      setTodayAttendance(res.data?.[0] || null)
+      setTodayAttendance(res.data?.data?.[0] || res.data?.[0] || null)
     } catch (error) {
       console.error('[Absensi] Error load attendance:', error.response?.status)
     }

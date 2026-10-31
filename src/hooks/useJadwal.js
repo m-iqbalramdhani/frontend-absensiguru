@@ -16,7 +16,7 @@ export default function useJadwal() {
       console.log('[useJadwal] Fetching jadwal...')
       const res = await api.get('/api/jadwal/saya')
       console.log('[useJadwal] Response:', res.data)
-      setJadwal(res.data || [])
+      setJadwal(res.data?.data || res.data || [])
     } catch (e) {
       console.error('[useJadwal] Error:', e.response?.status, e.response?.data)
       setError(e.message || 'Gagal memuat jadwal')

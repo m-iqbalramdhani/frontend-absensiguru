@@ -43,7 +43,7 @@ export default function DashboardPage() {
 
       const attendanceRes = await api.get(`/api/absensi/riwayat?tanggal=${today}`)
       console.log('[Dashboard] Riwayat response:', attendanceRes.data)
-      setTodayAttendance(attendanceRes.data?.[0] || null)
+      setTodayAttendance(attendanceRes.data?.data?.[0] || attendanceRes.data?.[0] || null)
 
       try {
         // Test 2: Rekap bulanan
@@ -393,7 +393,7 @@ export default function DashboardPage() {
                         {item.nama}
                      </div>
                      <div style={{ fontSize: '13px', color: 'var(--color-on-surface-variant)' }}>
-                        Nilai SAW: <span style={{ fontWeight: 700, color: 'var(--color-primary)' }}>{item.skor}</span>
+                        Nilai SAW: <span style={{ fontWeight: 700, color: 'var(--color-primary)' }}>{item.skor}</span>{item.c1 !== undefined && <span style={{ marginLeft: '8px', fontSize: '12px', opacity: 0.85 }}>(C1: {item.c1}% | C2: {item.c2})</span>}
                      </div>
                   </div>
 
